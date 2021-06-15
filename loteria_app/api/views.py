@@ -5,7 +5,7 @@ from .serializers import GameSerializer
 # Create your views here.
 
 # api view give all game objects and use serializer
-class GameView(generics.CreateAPIView):
+class GameView(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 

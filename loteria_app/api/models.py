@@ -1,5 +1,40 @@
 from django.db import models
 
+import secrets
+import string
+
+
+def generate_game_code() -> int:
+    """Generates a unique game code.
+    
+    Returns
+    -------
+        int
+    - a unique 7 digit numerical code
+    """
+    while True:
+        # code will only contain digits
+        code_options = string.digits
+        generated_game_code = ''.join(secrets.choice(code_options) for i in range(7))
+        if Game.objects.filter(game_code=generated_game_code).count() == 0:
+            break
+    return generated_game_code
+
+def generate_player_id() -> int:
+    """Generates a unique player id.
+    
+    Returns
+    -------
+        string
+    - a unique 5 digit alphaneumeric code
+    """
+    while True:
+        # code will have uppercase letters and numbers
+        code_options = string.ascii_uppercase + string.digits
+        generated_player_id = ''.join(secrets.choice(code_options) for i in range(5))
+        if Player.objects.filter(player_id=generated_player_id).count() == 0:
+            break
+    return generated_player_id
 
 # Create your models here.
 class Game( models.Model):
@@ -26,9 +61,10 @@ class Game( models.Model):
     # default 0 will just be regular loteria cards
     cards_id = models.IntegerField(null=False, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    game_code = models.IntegerField(null=False, default="", unique=True)
     host_id = models.IntegerField(null=False, default=0)
     marker_id = models.IntegerField(null=False, default=0)
-    players = models.IntegerField(null=False, default=0)
+    game_over = models.BooleanField(null=False, default=False)
     
 
 class Player(models.Model):
@@ -45,6 +81,8 @@ class Player(models.Model):
         the number of times this player has lost
     """
     # id is automatically given by django
+    player_id = models.CharField(max_length=15, default="", unique=True)
     name = models.CharField(max_length=100, null=False, unique=False)
     wins = models.IntegerField(null=False, default=0)
     losses = models.IntegerField(null=False, default=0)
+    currently_in_game = models.BooleanField(null=False, default=False)

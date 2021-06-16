@@ -3,9 +3,20 @@ from django.db import models
 import secrets
 import string
 
+CARD_PACK_CHOICES = (
+    ('1', 'Traditional Cards'),
+    ('2', 'Special Cards'),
+    ('3', 'Other Themed Cards')
+)
+
+MARKER_CHOICES = (
+    ('1', 'Plastic Dots'),
+    ('2', 'Quarters'),
+    ('3', 'Beans')
+)
 
 def generate_game_code() -> int:
-    """Generates a unique game code.
+    """ Generates a unique game code.
     
     Returns
     -------
@@ -64,16 +75,17 @@ class Game( models.Model):
         If True then game is over. 
     """
     # default 0 will just be regular loteria cards
-    cards_id = models.IntegerField(null=True, default=1)
+    # TODO cards_id and marker_id should be choices not harded coded values
+    cards_id = models.CharField(max_length=10, choices=CARD_PACK_CHOICES, default='1')
     created_at = models.DateTimeField(auto_now_add=True)
     game_code = models.IntegerField(null=False, default=generate_game_code, unique=True)
     host = models.CharField(max_length=100, unique=True)
-    marker_id = models.IntegerField(null=True, default=1)
+    marker_id = models.CharField(max_length=10, choices=MARKER_CHOICES, default='1')
     game_over = models.BooleanField(null=True, default=True)
     
 
 class Player(models.Model):
-    """Model that describes a Player in the Game
+    """ Model that describes a Player in the Game
 
     Attributes
     ----------

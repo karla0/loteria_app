@@ -18,7 +18,7 @@ def generate_game_code() -> int:
         generated_game_code = ''.join(secrets.choice(code_options) for i in range(7))
         if Game.objects.filter(game_code=generated_game_code).count() == 0:
             break
-    return generated_game_code
+    return int(generated_game_code)
 
 def generate_player_id() -> int:
     """Generates a unique player id.
@@ -52,11 +52,16 @@ class Game( models.Model):
         player of ID of whoever started the game, will control when game starts,
         what card deck is used and marker type.
 
+    game_code : int
+        code used to identify game when adding players. 
+
     marker_id : int
         ID given to the marker chosen for the game
 
-    players : List
-        For now a list of players that are part of the game 
+    game_over : bool
+        indicates when game has been won or if host indicates the 
+        end to a game. 
+        If True then game is over. 
     """
     # default 0 will just be regular loteria cards
     cards_id = models.IntegerField(null=False, default=0)
@@ -79,8 +84,14 @@ class Player(models.Model):
         the number of times this player has won
     losses : int
         the number of times this player has lost
+
+    player_id : string
+        the id assigned to a player during a game.
+    
+    currently_in_game : bool
+        indicates whether player is currently in a game, 
+        could be used in case of accidental tab close.
     """
-    # id is automatically given by django
     player_id = models.CharField(max_length=15, default="", unique=True)
     name = models.CharField(max_length=100, null=False, unique=False)
     wins = models.IntegerField(null=False, default=0)

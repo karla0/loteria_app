@@ -20,7 +20,7 @@ def generate_game_code() -> int:
             break
     return int(generated_game_code)
 
-def generate_player_id() -> int:
+def generate_player_id() -> string:
     """Generates a unique player id.
     
     Returns
@@ -64,12 +64,12 @@ class Game( models.Model):
         If True then game is over. 
     """
     # default 0 will just be regular loteria cards
-    cards_id = models.IntegerField(null=False, default=0)
+    cards_id = models.IntegerField(null=True, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
-    game_code = models.IntegerField(null=False, default="", unique=True)
-    host_id = models.IntegerField(null=False, default=0)
-    marker_id = models.IntegerField(null=False, default=0)
-    game_over = models.BooleanField(null=False, default=False)
+    game_code = models.IntegerField(null=False, default=generate_game_code, unique=True)
+    host = models.CharField(max_length=100, unique=True)
+    marker_id = models.IntegerField(null=True, default=1)
+    game_over = models.BooleanField(null=True, default=True)
     
 
 class Player(models.Model):
@@ -92,8 +92,8 @@ class Player(models.Model):
         indicates whether player is currently in a game, 
         could be used in case of accidental tab close.
     """
-    player_id = models.CharField(max_length=15, default="", unique=True)
-    name = models.CharField(max_length=100, null=False, unique=False)
+    player_id = models.CharField(max_length=15, default=generate_player_id, unique=True)
+    name = models.CharField(max_length=100, unique=False)
     wins = models.IntegerField(null=False, default=0)
     losses = models.IntegerField(null=False, default=0)
     currently_in_game = models.BooleanField(null=False, default=False)

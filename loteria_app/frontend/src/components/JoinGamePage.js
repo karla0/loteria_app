@@ -1,7 +1,7 @@
-import React, { Component } from react;
+import React, { Component } from "react";
 
 export default class JoinGamePage extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
     }
 

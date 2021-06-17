@@ -12,6 +12,7 @@ class GameView(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
+
 class CreateGameView(APIView):
     serializer_class = CreateGameSerializer
     def post(self, request, format=None):
@@ -36,8 +37,8 @@ class CreateGameView(APIView):
             else:
                 game = Game(host=host, cards_id=cards_id, marker_id=marker_id)
                 game.save()
-
-        return Response(GameSerializer(game).data, status=status.HTTP_201_CREATED)
+                return Response(GameSerializer(game).data, status=status.HTTP_201_CREATED)
+        return Response({'Bad Request': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreatePlayerView(APIView):

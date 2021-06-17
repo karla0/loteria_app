@@ -91,21 +91,18 @@ class Player(models.Model):
     ----------
 
     name : string
-        the name of the player
+        the display name of the player.
     wins : int
-        the number of times this player has won
+        the number of times this player has won.
     losses : int
-        the number of times this player has lost
-
+        the number of times this player has lost.
     player_id : string
         the id assigned to a player during a game.
-    
-    currently_in_game : bool
-        indicates whether player is currently in a game, 
-        could be used in case of accidental tab close.
+    game_id : int
+        the game code of the game joined, will be null if no game has been joined.
     """
     player_id = models.CharField(max_length=15, default=generate_player_id, unique=True)
+    game_code = models.IntegerField(null=True)
     name = models.CharField(max_length=100, unique=False)
     wins = models.IntegerField(null=False, default=0)
     losses = models.IntegerField(null=False, default=0)
-    currently_in_game = models.BooleanField(null=False, default=False)

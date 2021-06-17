@@ -14,3 +14,23 @@ This app is based on the Mexican game of Loteria.
 
 1. Players are allowed to add markers after called card has passed.
 2. Players with incorrectely marked cells will not be notified of the errors. 
+
+# API Endpoints
+
+## /create_game
+    POST
+    - takes card_id and marker_id
+    - adds game to list of active games
+
+## /view_games
+    GET 
+    - lists a every active game in the app pulled from sqlite3 database.
+    
+## /join
+    - page for joining game, player must enter name.
+## /start
+    - page where host creates a game
+    - user must select card theme and marker theme. 
+    - Defaults to "Traditional" 
+## /game
+## /waiting

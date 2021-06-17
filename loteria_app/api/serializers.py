@@ -19,6 +19,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
         fields = ('id', 'player_id', 
+                  ''
                   'name', 'wins', 
                   'losses', 'currenty_in_game'
                   )
@@ -26,4 +27,4 @@ class PlayerSerializer(serializers.ModelSerializer):
 class CreatePlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player 
-        fields = ('name')
+        fields = ('name', 'game_code')

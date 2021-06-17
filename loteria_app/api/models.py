@@ -51,35 +51,38 @@ def generate_player_id() -> string:
 class Game( models.Model):
     """ Model that describes a loteria game
 
-    Attributes
-    ----------
+    Fields
+    ------
     cards_id : int
-        ID given to card packs to be set in configuration file.
-    
-    created_at : DateTime
-        when the game started
+    - the id of the card theme chosen by user during creation of game.
 
-    host_id : int
-        player of ID of whoever started the game, will control when game starts,
-        what card deck is used and marker type.
+    created_at : dateTime
+    - the time that the game was started.
 
     game_code : int
-        code used to identify game when adding players. 
+    - a unique 7 digit code assigned during creation 
+    needed to join games.
 
-    marker_id : int
-        ID given to the marker chosen for the game
+    host : string
+    - the session key of the person who started the game
+    ensures that users do not have more that 1 running game.
 
     game_over : bool
-        indicates when game has been won or if host indicates the 
-        end to a game. 
-        If True then game is over. 
+    - defaults to True for now but will default to False upon creation.
+
+    maker_id : int
+    - the id of the marker type chosen by user during creation of game.
+
+    Notes
+    -----
+    - Considering making game_code primary key instead
     """
     # default 0 will just be regular loteria cards
     # TODO cards_id and marker_id should be choices not harded coded values
-    cards_id = models.CharField(max_length=10, choices=CARD_PACK_CHOICES, default='1')
-    created_at = models.DateTimeField(auto_now_add=True)
     game_code = models.IntegerField(null=False, default=generate_game_code, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     host = models.CharField(max_length=100, unique=True)
+    cards_id = models.CharField(max_length=10, choices=CARD_PACK_CHOICES, default='1')
     marker_id = models.CharField(max_length=10, choices=MARKER_CHOICES, default='1')
     game_over = models.BooleanField(null=True, default=True)
     
@@ -98,7 +101,7 @@ class Player(models.Model):
         the number of times this player has lost.
     player_id : string
         the id assigned to a player during a game.
-    game_id : int
+    game_code : int
         the game code of the game joined, will be null if no game has been joined.
     """
     player_id = models.CharField(max_length=15, default=generate_player_id, unique=True)
@@ -106,3 +109,6 @@ class Player(models.Model):
     name = models.CharField(max_length=100, unique=False)
     wins = models.IntegerField(null=False, default=0)
     losses = models.IntegerField(null=False, default=0)
+
+
+ 

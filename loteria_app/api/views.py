@@ -7,10 +7,14 @@ from .models import Game, Player
 from .serializers import GameSerializer, CreateGameSerializer, PlayerSerializer, CreatePlayerSerializer
 # Create your views here.
 
-# api view give all game objects and use serializer
 class GameView(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+
+
+class PlayerView(generics.ListAPIView):
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
 
 
 class CreateGameView(APIView):
@@ -42,6 +46,7 @@ class CreateGameView(APIView):
 
 
 class CreatePlayerView(APIView):
+    """Creates a player from name and game code."""
     serializer_class = CreatePlayerSerializer
     def post(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
@@ -49,5 +54,23 @@ class CreatePlayerView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             name = serializer.data.get('name')
+            game_code = serializer.data.get('game_code')
 
 
+class GetGame(APIView):
+    """Retrives game with matching code from database and sets parameters and host."""
+    serializer_class = GameSerializer
+    lookup_url_params = 'game_code'
+
+    def get(self, request, format=None):
+        game_code = request.GET.get(self.lookup_url_params)
+        if game_code != None:
+            game = Game.objects.filter(game_code=game_code)
+            if len(game) > 0:
+                data = GameSerializer(game[0].data)
+                data['is_host'] = self.request.session.session_key == game[0].host
+                return Response(data, status=status.HTTP_200_OK)
+
+            return Response({'Game Not Found': 'Code does not match any games. Check code.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'Bad Request': 'None Found' }, status=status.HTTP_400_BAD_REQUEST)

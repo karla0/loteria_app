@@ -16,8 +16,8 @@ export default class JoinGamePage extends Component {
         super(props);
 
         this.state = {
-            game_code: 0,
-            name: ''
+            name: '',
+            game_code: 0
         };
 
         this.handleJoinButtonPressed = this.handleJoinButtonPressed.bind(this)
@@ -34,7 +34,7 @@ export default class JoinGamePage extends Component {
     handlePlayerName(e) {
         this.setState({
             name: e.target.value
-        })
+        });
     }
 
     handleJoinButtonPressed() {

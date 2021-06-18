@@ -1,6 +1,4 @@
-from django.db.models.query import QuerySet
-from django.shortcuts import render
-from rest_framework import generics, serializers, status
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Game, Player
@@ -18,6 +16,17 @@ class PlayerView(generics.ListAPIView):
 
 
 class CreateGameView(APIView):
+    """
+    Used by endpoint to create a new game 
+    and stores to database using serializer
+    
+
+    Returns
+    -------
+
+        Response
+        -  takes data passed in from request and creates a 
+    """
     serializer_class = CreateGameSerializer
     def post(self, request, format=None):
         # checks for existing session if not create a session key
@@ -49,12 +58,23 @@ class CreatePlayerView(APIView):
     """Creates a player from name and game code."""
     serializer_class = CreatePlayerSerializer
     def post(self, request, format=None):
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             name = serializer.data.get('name')
             game_code = serializer.data.get('game_code')
+            player_id = serializer.data.get('player_id')
+            queryset = Player.objects.filter(player_id= player_id)
+            if queryset.exists():
+                player = queryset[0]
+                player.name = name
+                player.game_code = game_code
+                player.save(update_fields=['name', 'game_code'])
+                return Response(PlayerSerializer(player).data, status=status.HTTP_200_OK)
+            else:
+                player = Player(name=name, game_code=game_code)
+                player.save()
+                return Response(PlayerSerializer(player).data, status=status.HTTP_201_CREATED)
+        return Response({'Bad Request': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetGame(APIView):

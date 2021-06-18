@@ -105,8 +105,8 @@ class Player(models.Model):
         the game code of the game joined, will be null if no game has been joined.
     """
     player_id = models.CharField(max_length=15, default=generate_player_id, unique=True)
-    game_code = models.IntegerField(null=True)
     name = models.CharField(max_length=100, unique=False)
+    game_code = models.IntegerField(null=True)
     wins = models.IntegerField(null=False, default=0)
     losses = models.IntegerField(null=False, default=0)
 

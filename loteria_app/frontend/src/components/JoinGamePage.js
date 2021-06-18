@@ -14,15 +14,14 @@ import FormControl from "@material-ui/core/FormControl";
 export default class JoinGamePage extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             name: '',
             game_code: 0
         };
 
-        this.handleJoinButtonPressed = this.handleJoinButtonPressed.bind(this)
-        this.handleGameCode = this.handleGameCode.bind(this)
-        this.handlePlayerName = this.handlePlayerName.bind(this)
+        this.handleJoinButtonPressed = this.handleJoinButtonPressed.bind(this);
+        this.handleGameCode = this.handleGameCode.bind(this);
+        this.handlePlayerName = this.handlePlayerName.bind(this);
     }
 
     handleGameCode(e) {
@@ -38,10 +37,19 @@ export default class JoinGamePage extends Component {
     }
 
     handleJoinButtonPressed() {
-        console.log(this.state)
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: this.state.name,
+                game_code: this.state.game_code,
+            }),
+        };
+        fetch("/api/create-player", requestOptions)
+            .then((response) => response.json())
+            .then((data) => this.props.history.push("/player/" + data.player_id));
+            
     }
-        
-
     render() {
         return <Grid container spacing={1}>
             <Grid item xs={12} align="center">
@@ -82,12 +90,12 @@ export default class JoinGamePage extends Component {
                 </FormControl>
             </Grid>
             <Grid item xs={12} align="center">
-                <Button color="primary" variant="contained" onClick={this.handleJoinButtonPressed}>
+                <Button color="primary" variant="outlined" onClick={this.handleJoinButtonPressed}>
                     Join Game
                 </Button>
             </Grid>
             <Grid item xs={12} align="center">
-                <Button color="secondary" variant="contained" to="/" component={ Link }>
+                <Button color="secondary" variant="outlined" to="/" component={ Link }>
                     Back
                 </Button>
             </Grid>

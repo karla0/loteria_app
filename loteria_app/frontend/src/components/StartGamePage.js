@@ -11,18 +11,19 @@ import RadioGroup  from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 export default class StartGamePage extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
             cards_id: "1",
-            marker_id: "1"
+            marker_id: "1",
+            game_over: 1 ,
         };
 
         this.handleStartButtonPressed = this.handleStartButtonPressed.bind(this);
         this.handleCardThemeChange = this.handleCardThemeChange.bind(this);
         this.handleMarkerChange = this.handleMarkerChange.bind(this);
     }
+    
 
     handleCardThemeChange(e) {
         this.setState({
@@ -30,28 +31,39 @@ export default class StartGamePage extends Component {
         });
     }
 
+
     handleMarkerChange(e) {
         this.setState({
             marker_id: e.target.value,
+        });
+        // upon change of marker update game over flag,
+        //  might make this default of Game Model 
+        this.setState( {
+            game_over: 0,
         });
     }
 
     handleStartButtonPressed() {
         const requestOptions = {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({
                 cards_id: this.state.cards_id,
                 marker_id: this.state.marker_id,
+                game_over: this.state.game_over,
+
             }),
         };
-        fetch("/api/create_game", requestOptions)
-        .then((response) => response.json())
-        .then((data) => console.log(data));
-    }
+        fetch("/api/create-game", requestOptions)
+            .then((response) => response.json())
+            .then((data) => this.props.history.push("/game/" + data.game_code));
+        }
 
     render() {
-        return (<Grid container spacing={1}>
+        return (
+        <Grid container spacing={1}>
             <Grid item xs={12} align="center">
                 <Typography component="h4" variant="h4">
                     Start a Game.

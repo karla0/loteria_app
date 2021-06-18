@@ -37,6 +37,7 @@ class CreateGameView(APIView):
         if serializer.is_valid():
             cards_id = serializer.data.get('cards_id')
             marker_id = serializer.data.get('marker_id')
+            game_over = serializer.data.get('game_over')
             host = self.request.session.session_key
             # checks if other games contain same session key dont really need now.
             queryset = Game.objects.filter(host=host)
@@ -45,10 +46,11 @@ class CreateGameView(APIView):
                 game = queryset[0]
                 game.cards_id = cards_id
                 game.marker_id = marker_id
-                game.save(update_fields=['cards_id', 'marker_id'])
+                game.game_over = game_over
+                game.save(update_fields=['cards_id', 'marker_id', 'game_over'])
                 return Response(GameSerializer(game).data, status=status.HTTP_200_OK)
             else:
-                game = Game(host=host, cards_id=cards_id, marker_id=marker_id)
+                game = Game(host=host, cards_id=cards_id, marker_id=marker_id, game_over=game_over)
                 game.save()
                 return Response(GameSerializer(game).data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)

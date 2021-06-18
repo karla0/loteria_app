@@ -7,8 +7,8 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = ('id', 'game_code', 
                   'cards_id', 'host', 
-                  'game_over', 'marker_id',
-                  'created_at'
+                  'marker_id',
+                  'created_at','game_over'
                   )
 
 class CreateGameSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class CreateGameSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Game
-        fields = ('cards_id', 'marker_id')
+        fields = ('cards_id', 'marker_id', 'game_over')
 
 class PlayerSerializer(serializers.ModelSerializer):
     """Deserializes player object retrieved from database"""

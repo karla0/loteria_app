@@ -109,6 +109,7 @@ class Player(models.Model):
     game_code = models.IntegerField(null=True)
     wins = models.IntegerField(null=False, default=0)
     losses = models.IntegerField(null=False, default=0)
+    host_key = models.CharField(max_length=100, unique=True)
 
 
  

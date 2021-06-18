@@ -59,11 +59,13 @@ class CreatePlayerView(APIView):
     serializer_class = CreatePlayerSerializer
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
         if serializer.is_valid():
             name = serializer.data.get('name')
             game_code = serializer.data.get('game_code')
-            player_id = serializer.data.get('player_id')
-            queryset = Player.objects.filter(player_id= player_id)
+            host_key = self.request.session.session_key
+            queryset = Player.objects.filter(host_key= host_key)
             if queryset.exists():
                 player = queryset[0]
                 player.name = name
@@ -71,14 +73,14 @@ class CreatePlayerView(APIView):
                 player.save(update_fields=['name', 'game_code'])
                 return Response(PlayerSerializer(player).data, status=status.HTTP_200_OK)
             else:
-                player = Player(name=name, game_code=game_code)
+                player = Player(host_key= host_key, name=name, game_code=game_code)
                 player.save()
                 return Response(PlayerSerializer(player).data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetGame(APIView):
-    """Retrives game with matching code from database and sets parameters and host."""
+    """Retrives game with matching code from database and sets is_host."""
     serializer_class = GameSerializer
     lookup_url_params = 'game_code'
 
@@ -90,7 +92,20 @@ class GetGame(APIView):
                 data = GameSerializer(game[0].data)
                 data['is_host'] = self.request.session.session_key == game[0].host
                 return Response(data, status=status.HTTP_200_OK)
-
             return Response({'Game Not Found': 'Code does not match any games. Check code.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'Bad Request': 'None Found' }, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Invalid Data' }, status=status.HTTP_400_BAD_REQUEST)
+class GetPlayer(APIView):
+    serializer_class = PlayerSerializer
+    lookup_url_parameters = 'player_id'
+    def get(self, request, format=None):
+        player_id = request.GET.get(self.lookup_url_parameters)
+        if player_id != None:
+            player = Player.objects.filter(player_id=player_id)
+            if len(player) > 0:
+                data = PlayerSerializer(player[0].data)
+                return Response(data, status=status.HTTP_200_OK)
+            return Response({"Player Not Found": "No player to display."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Invalid Data'})
+
+

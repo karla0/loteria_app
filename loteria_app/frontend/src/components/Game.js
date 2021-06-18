@@ -8,16 +8,17 @@ export default class Game extends Component {
             marker_id: 1,
             isHost: false,
         };
-        this.gameCode = this.props.match.params.gameCode;
+        this.game_code = this.props.match.params.game_code;
     }
 
     render() {
         return (
         <div>
-            <h3>Game Code: {this.gameCode}</h3>
-            <p>Cards ID: {this.state.cards_id}</p>
-            <p>Marker ID: {this.state.marker_id}</p>
+            <h3>Game Page: {this.game_code}</h3>
+            <p>Cards Chosen: {this.state.cards_id}</p>
+            <p>Marker Chosen: {this.state.marker_id}</p>
             <p>isHost: {this.state.isHost}</p>
-        </div>);
+        </div>
+        );
     }
 }

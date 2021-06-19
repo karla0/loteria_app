@@ -80,7 +80,19 @@ class CreatePlayerView(APIView):
 
 
 class GetGame(APIView):
-    """Retrives game with matching code from database and sets is_host."""
+    """
+    Retrives game with matching code from database 
+    and sets is_host by matching session keys.
+
+    Returns
+    -------
+        Response
+        - HTTP 200 OK - game was retrieved sucessfully
+        - HTTP 400 Bad Request - Game Not Found - Game code does not match any existing games - 
+        no matching player found with that id
+        - HTTP 400 Bad Request - Invalid Data - the data type or format is not valid.
+    
+    """
     serializer_class = GameSerializer
     lookup_url_params = 'game_code'
 
@@ -93,20 +105,32 @@ class GetGame(APIView):
                 data['is_host'] = self.request.session.session_key == game[0].host
                 return Response(data, status=status.HTTP_200_OK)
             return Response({'Game Not Found': 'Code does not match any games. Check code.'}, status=status.HTTP_400_BAD_REQUEST)
-
         return Response({'Bad Request': 'Invalid Data' }, status=status.HTTP_400_BAD_REQUEST)
 
 class GetPlayer(APIView):
+    """
+    Takes player id parameter and returns matching player info
+    from database.
+
+    Returns
+    -------
+        Response
+        - HTTP 200 OK - player was retrieved sucessfully
+        - HTTP 400 Bad Request - Player Not Found - 
+        no matching player found with that id
+        - HTTP 400 Bad Request - Invaid Data - the data type or format is not valid.
+    """
     serializer_class = PlayerSerializer
     lookup_url_parameters = 'player_id'
+
     def get(self, request, format=None):
         player_id = request.GET.get(self.lookup_url_parameters)
         if player_id != None:
             player = Player.objects.filter(player_id=player_id)
             if len(player) > 0:
-                data = PlayerSerializer(player[0].data)
+                data = PlayerSerializer(player[0]).data
                 return Response(data, status=status.HTTP_200_OK)
             return Response({"Player Not Found": "No player to display."}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'Bad Request': 'Invalid Data'})
+        return Response({'Bad Request': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 

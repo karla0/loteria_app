@@ -51,8 +51,7 @@ export default class StartGamePage extends Component {
             },
             body: JSON.stringify({
                 cards_id: this.state.cards_id,
-                marker_id: this.state.marker_id,
-                game_over: this.state.game_over,
+                marker_id: this.state.marker_id
 
             }),
         };

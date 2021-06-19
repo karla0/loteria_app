@@ -24,7 +24,7 @@ class CreateGameSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Game
-        fields = ('cards_id', 'marker_id', 'game_over')
+        fields = ('cards_id', 'marker_id')
 
 class PlayerSerializer(serializers.ModelSerializer):
     """Deserializes player object retrieved from database"""

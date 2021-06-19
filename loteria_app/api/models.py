@@ -85,7 +85,7 @@ class Game( models.Model):
     host = models.CharField(max_length=100, unique=True)
     cards_id = models.CharField(max_length=10, choices=CARD_PACK_CHOICES, default='1')
     marker_id = models.CharField(max_length=10, choices=MARKER_CHOICES, default='1')
-    game_over = models.IntegerField(null=False, default=1, unique=False)
+    game_over = models.BooleanField(default=True)
     
 
 class Player(models.Model):
